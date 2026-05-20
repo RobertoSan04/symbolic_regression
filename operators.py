@@ -4,30 +4,14 @@ from tree import Node, FUNCTIONS, TERMINALS, ERC_RANGE, generate_grow
 
 # Tournament Selection
 def tournament_selection(population: list, fitnesses: list, k: int = 3) -> "Node":
-    """
-    Node.copy() -> deep copy
-    Return a *copy* of the winner of a k-way tournament.
-    Assumes lower fitness = better (minimising RMSE / error).
-    """
+    # Return a copy of the winner of a k-way tournament.
     contestants = random.sample(range(len(population)), k)
     winner_idx = min(contestants, key=lambda i: fitnesses[i])
     return population[winner_idx].copy()
 
 # Subtree Crossover
 def subtree_crossover(parent1: "Node", parent2: "Node") -> tuple:
-    """
-    Standard one-point subtree crossover.
-    Returns two NEW offspring (deep copies — originals untouched).
-
-    Strategy:
-        - Pick a random crossover point in each parent (bias: 90% internal
-          nodes, 10% leaves — classic Koza bias to avoid too-shallow swaps).
-        - Swap the subtrees.
-
-    Uses all_nodes() which returns (node, parent, child_index).
-    Root node has parent=None; we skip it as a crossover point to avoid
-    swapping the entire tree (degenerate case).
-    """
+    # Standard one-point subtree crossover.
     off1 = parent1.copy()
     off2 = parent2.copy()
 
@@ -60,11 +44,7 @@ def subtree_crossover(parent1: "Node", parent2: "Node") -> tuple:
 
 
 def _get_crossover_point_pool(tree: "Node") -> list:
-    """
-    Return a biased pool of (node, parent, child_index) tuples.
-    90% probability mass on internal (function) nodes, 10% on leaves.
-    Falls back to all nodes if only one type exists.
-    """
+    # Return a biased pool of (node, parent, child_index) tuples.
     all_n = tree.all_nodes()
     # Exclude root (parent is None) to avoid whole-tree swap
     non_root = [(n, p, i) for n, p, i in all_n if p is not None]
@@ -85,14 +65,7 @@ def _get_crossover_point_pool(tree: "Node") -> list:
 
 # Point Mutation
 def point_mutation(tree: "Node", max_depth: int = None) -> "Node":
-    """
-    Point (node replacement) mutation.
-    Each node is replaced with a random node of the *same arity*,
-    preserving tree structure.
-
-    - Function node  → random function with same number of children
-    - Terminal leaf  → random terminal (variable or ERC)
-    """
+    # Point (node replacement) mutation.
     mutant = tree.copy()
     all_n = mutant.all_nodes()
 
@@ -115,12 +88,7 @@ def point_mutation(tree: "Node", max_depth: int = None) -> "Node":
 
 # Subtree Mutation  (headless chicken crossover / Koza mutation)
 def subtree_mutation(tree: "Node", max_depth: int = 4) -> "Node":
-    """
-    Replace a random subtree with a freshly generated random tree.
-    Equivalent to crossover with a randomly generated 'donor'.
-
-    max_depth controls the depth of the injected subtree (not the whole tree).
-    """
+    # Replace a random subtree with a freshly generated random tree.
     mutant = tree.copy()
     all_n = mutant.all_nodes()
     non_root = [(n, p, i) for n, p, i in all_n if p is not None]
@@ -140,10 +108,7 @@ def _coin(p: float = 0.5) -> bool:
 
 
 def _random_terminal() -> object:
-    """
-    Return a random terminal value: variable name or ERC float.
-    Mirrors the logic in tree.py's generate_* functions.
-    """
+    # Return a random terminal value: variable name or ERC float.
     variables = [t for t in TERMINALS if isinstance(t, str)]
     # 50/50 split between variable and ERC (same as typical GP)
     if variables and _coin(0.5):
