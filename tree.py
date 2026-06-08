@@ -112,15 +112,3 @@ def replace_subtree(tree, target_parent, target_idx, new_subtree):
         return new_subtree
     target_parent.children[target_idx] = new_subtree
     return tree
-
-
-if __name__ == "__main__":
-    random.seed(42)
-    tree = generate_grow(max_depth = 3)
-    print(f"Árbol: {tree}")
-    print(f"Tamaño: {tree.size()}, Profundidad: {tree.depth()}")
-    X = {'x': np.linspace(-1, 1, 5)}
-    print(f"f(x) sobre [-1,1]: {tree.evaluate(X)}")
-
-    pop = ramped_half_and_half(20, min_depth=2, max_depth=4)
-    print(f"\nPoblación: {len(pop)} árboles, profundidades: {[t.depth() for t in pop]}")
