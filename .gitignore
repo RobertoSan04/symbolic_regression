@@ -3,6 +3,6 @@
 *.toml
 *.lock
 *.DS_Store
-*.idea
+*.idea/
 __pycache__
 .gitignore
